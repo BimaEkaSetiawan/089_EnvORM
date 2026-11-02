@@ -2,13 +2,8 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const db = require('./models');
-const { Result } = require('pg');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-app.listen(port, () => {
-    console.log(`Server started on port 3000`);
-})
 
 db.sequelize.sync()
     .then((result)=> {
@@ -39,7 +34,7 @@ app.get('/komik', async (req, res) => {
     }
 });
 
-app.get('/komik/:id', async (req, res) => {
+app.put('/komik/:id', async (req, res) => {
     const id = req.params.id;
     const data = req.body;
 
@@ -51,22 +46,6 @@ app.get('/komik/:id', async (req, res) => {
 
         await komik.update(data);
         res.send({ message: 'Komik berhasil diupdate', komik });
-    } catch (err) {
-        res.status(500).send(err);
-    }
-});
-
-app.delete('/komik/:id', async (req, res) => {
-    const id = req.params.id;
-
-    try {
-        const komik = await db.Komik.findByPk(id);
-        if (!komik) {
-            return res.status(404).send({ message: 'Komik tidak ditemukan' });
-        }   
-
-        await komik.update(data);
-        res.send({ message: 'komik berhasil diupdate', komik });
     } catch (err) {
         res.status(500).send(err);
     }
